@@ -1,80 +1,43 @@
-<!DOCTYPE html>
-<html lang="uk">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ title }}</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh; background-color: #f4f4f9; }
-        header { background: #1b2838; color: #fff; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
-        header nav a { color: #c7d5e0; margin-left: 20px; text-decoration: none; font-weight: bold; }
-        .container { flex: 1; padding: 30px; max-width: 800px; margin: 0 auto; width: 100%; background: #fff; margin-top: 30px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .game-img { max-width: 300px; height: auto; border-radius: 5px; margin-bottom: 20px; display: block; }
-        .review-card { background: #f9f9f9; padding: 10px; margin-bottom: 10px; border-radius: 4px; border-left: 4px solid #66c0f4; }
-        footer { background: #171a21; color: #8f98a0; text-align: center; padding: 20px; margin-top: auto; }
-        .btn { display: inline-block; background: #66c0f4; color: #fff; padding: 8px 15px; text-decoration: none; border-radius: 4px; margin-bottom: 20px; }
-        .buy-btn { background: #5c7e10; color: #fff; border: none; padding: 10px 20px; font-size: 16px; border-radius: 4px; cursor: not-allowed; opacity: 0.6; }
-        form p { margin-bottom: 10px; }
-    </style>
-</head>
-<body>
+{% extends 'shop/base.html' %}
+{% block content %}
+<a href="{% url 'home' %}" class="btn">← На головну</a>
 
-    <header>
-        <div class="logo"><h2>🎮 GamePulse</h2></div>
-        <nav>
-            <a href="{% url 'home' %}">Головна</a>
-            {% for p in platforms %}
-                <a href="{% url 'platform_filter' p.id %}">{{ p.name }}</a>
-            {% endfor %}
-        </nav>
-    </header>
+<h1>{{ game.title }}</h1>
 
-    <div class="container">
-        <a href="{% url 'home' %}" class="btn">← На головну</a>
+{% if game.image %}
+    <img src="{{ game.image.url }}" alt="{{ game.title }}" style="max-width: 300px; display: block; margin-bottom: 20px; border-radius: 5px;">
+{% endif %}
 
-        <h1>{{ game.title }}</h1>
+<p><strong>Платформа:</strong> {{ game.platform.name }}</p>
+<p><strong>Жанр:</strong> {{ game.genre.name }}</p>
+<p><strong>Ціна:</strong> {{ game.price }} грн</p>
 
-        {% if game.image %}
-            <img src="{{ game.image.url }}" alt="{{ game.title }}" class="game-img">
-        {% endif %}
+<h3>⭐ Середня оцінка: {{ avg_rating|default:"Немає оцінок"|floatformat:1 }} / 5</h3>
 
-        <p><strong>Платформа:</strong> {{ game.platform.name }}</p>
-        <p><strong>Жанр:</strong> {{ game.genre.name }}</p>
-        <p><strong>Ціна:</strong> {{ game.price }} грн</p>
+<br>
+<button class="buy-btn" disabled>Купити (неактивно)</button>
 
-        <!-- Середній бал -->
-        <h3>⭐ Середня оцінка: {{ avg_rating|default:"Немає оцінок"|floatformat:1 }} / 5</h3>
+<hr style="margin: 30px 0;">
 
-        <br>
-        <button class="buy-btn" disabled>Купити (неактивно)</button>
+<h3>Залишити відгук та оцінку</h3>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" name="review_form" class="btn">Надіслати відгук</button>
+</form>
 
-        <hr style="margin: 30px 0;">
+<hr style="margin: 30px 0;">
 
-        <h3>Залишити відгук та оцінку</h3>
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" name="review_form" class="btn">Надіслати відгук</button>
-        </form>
-
-        <hr style="margin: 30px 0;">
-
-        <h3>Відгуки користувачів:</h3>
-        {% if reviews %}
-            {% for review in reviews %}
-                <div class="review-card">
-                    <p><strong>{{ review.user_name }}</strong> — Оцінка: <strong>{{ review.rating }}/5</strong></p>
-                    <p>{{ review.comment }}</p>
-                    <small style="color: gray;">{{ review.created_at|date:"Y-m-d H:i" }}</small>
-                </div>
-            {% endfor %}
-        {% else %}
-            <p>Ще немає відгуків. Будьте першим!</p>
-        {% endif %}
-    </div>
-
-    <footer>
-        <p>&copy; 2026 GamePulse. Усі права захищені.</p>
-    </footer>
-
-</body>
-</html>
+<h3>Відгуки користувачів:</h3>
+{% if reviews %}
+    {% for review in reviews %}
+        <div style="background: #f9f9f9; padding: 10px; margin-bottom: 10px; border-radius: 4px; border-left: 4px solid #66c0f4;">
+            <p><strong>{{ review.user_name }}</strong> — Оцінка: <strong>{{ review.rating }}/5</strong></p>
+            <p>{{ review.comment }}</p>
+            <small style="color: gray;">{{ review.created_at|date:"Y-m-d H:i" }}</small>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>Ще немає відгуків. Будьте першим!</p>
+{% endif %}
+{% endblock %}

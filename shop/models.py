@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 class Platform(models.Model):
@@ -45,3 +46,11 @@ class NewsletterSubscriber(models.Model):
 
     def __str__(self):
         return self.email
+
+class Order(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Користувач")
+    product_name = models.CharField(max_length=100, verbose_name="Товар")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата замовлення")
+
+    def __str__(self):
+        return f"Замовлення #{self.id} — {self.user.username}"

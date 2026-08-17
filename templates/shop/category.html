@@ -1,60 +1,25 @@
-<!DOCTYPE html>
-<html lang="uk">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ title }}</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh; background-color: #f4f4f9; }
-        header { background: #1b2838; color: #fff; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
-        header nav a { color: #c7d5e0; margin-left: 20px; text-decoration: none; font-weight: bold; }
-        .container { flex: 1; padding: 30px; max-width: 1000px; margin: 0 auto; width: 100%; }
-        .game-card { background: #fff; padding: 15px; margin-bottom: 15px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .game-card img { max-width: 150px; height: auto; display: block; margin-bottom: 10px; border-radius: 4px; }
-        footer { background: #171a21; color: #8f98a0; text-align: center; padding: 20px; margin-top: auto; }
-        .btn { display: inline-block; background: #66c0f4; color: #fff; padding: 8px 15px; text-decoration: none; border-radius: 4px; margin-bottom: 20px; }
-        .buy-btn { background: #5c7e10; color: #fff; border: none; padding: 6px 12px; border-radius: 3px; cursor: not-allowed; opacity: 0.6; }
-    </style>
-</head>
-<body>
+{% extends 'shop/base.html' %}
+{% block content %}
+<a href="{% url 'home' %}" class="btn">← На головну</a>
+<h1>Платформа: {{ selected_platform.name }}</h1>
+<hr style="margin-bottom: 20px;">
 
-    <header>
-        <div class="logo"><h2>🎮 GamePulse</h2></div>
-        <nav>
-            <a href="{% url 'home' %}">Головна</a>
-            {% for p in platforms %}
-                <a href="{% url 'platform_filter' p.id %}">{{ p.name }}</a>
-            {% endfor %}
-        </nav>
-    </header>
-
-    <div class="container">
-        <a href="{% url 'home' %}" class="btn">← На головну</a>
-        <h1>Платформа: {{ selected_platform.name }}</h1>
-        <hr style="margin-bottom: 20px;">
-
-        {% if games %}
-            <div class="games-list">
-                {% for game in games %}
-                    <div class="game-card">
-                        {% if game.image %}
-                            <img src="{{ game.image.url }}" alt="{{ game.title }}">
-                        {% endif %}
-                        <h3><a href="{% url 'game_detail' game.id %}">{{ game.title }}</a></h3>
-                        <p><strong>Жанр:</strong> {{ game.genre.name }}</p>
-                        <p><strong>Ціна:</strong> {{ game.price }} грн</p>
-                        <a href="{% url 'game_detail' game.id %}" class="btn" style="padding: 5px 10px; font-size: 14px;">Детальніше</a>
-                        <button class="buy-btn" disabled>Купити</button>
-                    </div>
-                {% endfor %}
+{% if games %}
+    <div class="games-list">
+        {% for game in games %}
+            <div class="game-card">
+                {% if game.image %}
+                    <img src="{{ game.image.url }}" alt="{{ game.title }}">
+                {% endif %}
+                <h3><a href="{% url 'game_detail' game.id %}">{{ game.title }}</a></h3>
+                <p><strong>Жанр:</strong> {{ game.genre.name }}</p>
+                <p><strong>Ціна:</strong> {{ game.price }} грн</p>
+                <a href="{% url 'game_detail' game.id %}" class="btn" style="padding: 5px 10px; font-size: 14px;">Детальніше</a>
+                <button class="buy-btn" disabled>Купити</button>
             </div>
-        {% else %}
-            <p>На цій платформі поки немає ігор.</p>
-        {% endif %}
+        {% endfor %}
     </div>
-
-    <footer>
-        <p>&copy; 2026 GamePulse. Усі права захищені.</p>
-    </footer>
-
-</body>
-</html>
+{% else %}
+    <p>На цій платформі поки немає ігор.</p>
+{% endif %}
+{% endblock %}

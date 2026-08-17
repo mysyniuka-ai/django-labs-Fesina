@@ -1,0 +1,17 @@
+{% extends 'shop/base.html' %}
+{% block content %}
+<h2>Особистий кабінет</h2>
+<p><strong>Користувач:</strong> {{ user.username }}</p>
+<p><strong>Email:</strong> {{ user.email }}</p>
+<hr>
+<h3>{% if user.is_staff %}Всі замовлення (Адмін-панель){% else %}Мої замовлення{% endif %}</h3>
+{% if orders %}
+    <ul>
+        {% for order in orders %}
+            <li>Замовлення №{{ order.id }} — <strong>{{ order.product_name }}</strong> (Клієнт: {{ order.user.username }}) від {{ order.created_at|date:"Y-m-d H:i" }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Список замовлень порожній.</p>
+{% endif %}
+{% endblock %}

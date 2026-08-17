@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Platform, Genre, Game, Review, NewsletterSubscriber
+from .models import Platform, Genre, Game, Review, NewsletterSubscriber, Order
 
 @admin.register(Platform, Genre)
 class StandardAdmin(admin.ModelAdmin):
@@ -20,3 +20,8 @@ class ReviewAdmin(admin.ModelAdmin):
 class NewsletterSubscriberAdmin(admin.ModelAdmin):
     list_display = ('email', 'subscribed_at')
     readonly_fields = ('subscribed_at',)
+
+@admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'product_name', 'created_at')
+    readonly_fields = ('created_at',)

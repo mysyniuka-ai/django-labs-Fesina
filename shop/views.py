@@ -1,7 +1,9 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
 from django.db.models import Avg
-from .models import Game, Platform, Genre, Review, NewsletterSubscriber
-from .forms import ReviewForm, NewsletterForm
+from .models import Game, Platform, Genre, Review, NewsletterSubscriber, Order
+from .forms import RegisterForm, ReviewForm, NewsletterForm
 
 
 def home_view(request):
@@ -74,3 +76,32 @@ def game_detail_view(request, game_id):
         'is_home': False
     }
     return render(request, 'shop/game_detail.html', context)
+
+
+def register_view(request):
+    platforms = Platform.objects.all()
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('home')
+    else:
+        form = RegisterForm()
+    return render(request, 'shop/register.html', {'form': form, 'platforms': platforms, 'title': 'Реєстрація'})
+
+
+@login_required
+def profile_view(request):
+    platforms = Platform.objects.all()
+    if request.user.is_staff:
+        orders = Order.objects.all()  # Адмін бачить усі замовлення
+    else:
+        orders = Order.objects.filter(user=request.user)  # Звичайний юзер бачить тільки свої
+
+    context = {
+        'orders': orders,
+        'platforms': platforms,
+        'title': 'Особистий кабінет'
+    }
+    return render(request, 'shop/profile.html', context)
