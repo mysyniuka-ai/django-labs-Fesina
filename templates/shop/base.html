@@ -3,19 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ title }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh; background-color: #f4f4f9; }
+        header { background: #1b2838; color: #fff; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+        header nav a { color: #c7d5e0; margin-left: 20px; text-decoration: none; font-weight: bold; }
+        header nav a:hover { color: #fff; }
+        .container { flex: 1; padding: 30px; max-width: 1000px; margin: 0 auto; width: 100%; }
+        .game-card { background: #fff; padding: 15px; margin-bottom: 15px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        footer { background: #171a21; color: #8f98a0; text-align: center; padding: 20px; margin-top: auto; }
+        .btn { display: inline-block; background: #66c0f4; color: #fff; padding: 8px 15px; text-decoration: none; border-radius: 4px; margin-bottom: 20px; }
+        .btn:hover { background: #417a9b; }
+    </style>
 </head>
 <body>
-    <h1>{{ header }}</h1>
-    <p>{{ content }}</p>
 
-    <!-- Умова для посилань -->
-    {% if is_home %}
-        <ul>
-            <li><a href="/page1/">Сторінка 1</a></li>
-            <li><a href="/page2/">Сторінка 2</a></li>
-        </ul>
-    {% else %}
-        <p><a href="/">← На головну</a></p>
-    {% endif %}
+    <!-- ХЕЗЕР З МЕНЮ -->
+    <header>
+        <div class="logo"><h2>🎮 GamePulse</h2></div>
+        <nav>
+            <a href="{% url 'home' %}">Головна</a>
+            <!-- Динамічне меню категорій (платформ) із бази даних -->
+            {% for p in platforms %}
+                <a href="{% url 'platform_filter' p.id %}">{{ p.name }}</a>
+            {% endfor %}
+        </nav>
+    </header>
+
+    <!-- ОСНОВНИЙ КОНТЕНТ -->
+    <div class="container">
+        {% if not is_home %}
+            <a href="{% url 'home' %}" class="btn">← На головну</a>
+        {% endif %}
+
+        <h1>{{ header|default:"Каталог ігор" }}</h1>
+
+        {% if selected_platform %}
+            <h3>Платформа: {{ selected_platform.name }}</h3>
+        {% endif %}
+
+        <hr style="margin-bottom: 20px;">
+
+        <!-- ВИВЕДЕННЯ ЕЛЕМЕНТІВ З БАЗИ ДАНИХ -->
+        {% if games %}
+            <div class="games-list">
+                {% for game in games %}
+                    <div class="game-card">
+                        <h3>{{ game.title }}</h3>
+                        <p><strong>Жанр:</strong> {{ game.genre.name }}</p>
+                        <p><strong>Платформа:</strong> {{ game.platform.name }}</p>
+                        <p><strong>Ціна:</strong> {{ game.price }} грн</p>
+                        <small style="color: gray;">Створено: {{ game.created_at|date:"Y-m-d H:i" }}</small>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>У цій категорії поки немає ігор. Додайте їх через панель адміністратора!</p>
+        {% endif %}
+    </div>
+
+    <!-- ФУТЕР -->
+    <footer>
+        <p>&copy; 2026 GamePulse. Усі права захищені. Навчальний проєкт Django.</p>
+    </footer>
+
 </body>
 </html>

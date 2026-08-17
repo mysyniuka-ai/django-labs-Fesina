@@ -1,28 +1,34 @@
 from django.shortcuts import render
+from .models import Game, Platform, Genre
+
 
 def home_view(request):
+    games = Game.objects.all()
+    platforms = Platform.objects.all()
+    genres = Genre.objects.all()
+
     context = {
-        'title': 'Головна сторінка',
-        'header': 'Вітаємо в нашому магазині ігор!',
-        'content': 'Це головна сторінка сайту. Оберіть потрібний розділ нижче:',
+        'title': 'Головна сторінка - GamePulse',
+        'games': games,
+        'platforms': platforms,
+        'genres': genres,
         'is_home': True
     }
     return render(request, 'shop/base.html', context)
 
-def page_one_view(request):
-    context = {
-        'title': 'Сторінка 1',
-        'header': 'Каталог ігор',
-        'content': 'Тут буде список доступних ігор та ключів активації.',
-        'is_home': False
-    }
-    return render(request, 'shop/base.html', context)
 
-def page_two_view(request):
+def platform_filter_view(request, platform_id):
+    platforms = Platform.objects.all()
+    genres = Genre.objects.all()
+    games = Game.objects.filter(platform_id=platform_id)
+    selected_platform = Platform.objects.get(id=platform_id)
+
     context = {
-        'title': 'Сторінка 2',
-        'header': 'Контакти та підтримка',
-        'content': 'Зв\'яжіться з нами у разі виникнення проблем з активацією ключів.',
+        'title': f'Платформа: {selected_platform.name}',
+        'games': games,
+        'platforms': platforms,
+        'genres': genres,
+        'selected_platform': selected_platform,
         'is_home': False
     }
     return render(request, 'shop/base.html', context)
