@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+</head>
+<body>
+    <h1>{{ header }}</h1>
+    <p>{{ content }}</p>
+
+    <!-- Умова для посилань -->
+    {% if is_home %}
+        <ul>
+            <li><a href="/page1/">Сторінка 1</a></li>
+            <li><a href="/page2/">Сторінка 2</a></li>
+        </ul>
+    {% else %}
+        <p><a href="/">← На головну</a></p>
+    {% endif %}
+</body>
+</html>
